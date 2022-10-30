@@ -3,19 +3,29 @@
 namespace App\Http\Livewire;
 
 use App\Models\Product;
+use Error;
 use Livewire\Component;
+use Illuminate\Http\Request;
 
 class ProductFormComponent extends Component
 {
     public $name;
     public $price;
     public $tax;
+    public $product;
 
-    public function render()
+    public function render(Request $request)
     {
         /* Validando seccion solo para admins */
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             redirect("/");
+        }
+
+        if ($request->id) {
+            $this->product = Product::findOrFail($request->id);
+            $this->name = $this->product->name;
+            $this->price = $this->product->price;
+            $this->tax = $this->product->tax;
         }
 
         return view('livewire.product-form-component');
@@ -34,27 +44,29 @@ class ProductFormComponent extends Component
             'required' => __('Es necesario rellenar todos los campos'),
         ]);
 
-      /* Creando un nuevo producto */
-      
-      $newProduct = Product::create([
-        "name" => $this->name,
-        "price" => $this->price,
-        "tax" => $this->tax
-    ]);
+        /* Creando un nuevo producto */
+        try {
+            if (!$this->product) {
+                $this->product = new Product();
+            };
 
-    if($newProduct) {
-        request()->session()->flash(
-            'success',
-            'El producto se ha creado correctamente.'
-        );
-    } else {
-        request()->session()->flash(
-            'error',
-            'El producto no se ha creado.'
-        );
+            $this->product->name = $this->name;
+            $this->product->price = $this->price;
+            $this->product->tax = $this->tax;
+            $this->product->save();
+
+            request()->session()->flash(
+                'success',
+                'El producto se ha guardado correctamente.'
+            );
+
+            redirect("products");
+
+        } catch (Error) {
+            request()->session()->flash(
+                'error',
+                'El producto no se ha guardado.'
+            );
+        }
     }
-
-    redirect("products");
-}
-
 }

@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/bills', BillsComponent::class)->name('bills');
     Route::get('/bills/{id}', BillDetailComponent::class)->name('bill_id');
     Route::get('/products', ProductsComponent::class)->name('products');
-    Route::get('/products/{id?}', ProductFormComponent::class)->name('product_form');
+    Route::get('/products/create', ProductFormComponent::class)->name('products_create');
+    Route::get('/products/{id?}', ProductFormComponent::class)->name('product_edit');
 
 });

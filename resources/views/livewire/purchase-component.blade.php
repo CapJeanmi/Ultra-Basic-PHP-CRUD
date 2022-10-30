@@ -16,7 +16,7 @@
     <button wire:click="save" type="button"
         class="rounded-lg bg-blue-500 py-3 px-5 text-white hover:bg-blue-800 mt-2">Comprar</button>
     @if (session('success'))
-        <p class="text-green-500">{{ session('success') }}</p>
+        <p class="bg-green-600 p-5 text-white text-center">{{ session('success') }}</p>
     @elseif(session('error'))
         <p class="text-red-500">{{ session('error') }}</p>
     @endif
